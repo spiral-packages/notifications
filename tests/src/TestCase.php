@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Spiral\Notifications\Tests;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
