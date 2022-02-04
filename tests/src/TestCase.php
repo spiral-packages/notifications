@@ -2,9 +2,27 @@
 
 namespace Spiral\Notifications\Tests;
 
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Spiral\Boot\Bootloader\ConfigurationBootloader;
+use Spiral\Notifications\Bootloader\NotificationsBootloader;
+use Symfony\Component\Notifier\NotifierInterface;
 
-class TestCase extends \PHPUnit\Framework\TestCase
+abstract class TestCase extends \Spiral\Testing\TestCase
 {
-    use MockeryPHPUnitIntegration;
+    public function getNotifier(): NotifierInterface
+    {
+        return $this->getContainer()->get(NotifierInterface::class);
+    }
+
+    public function rootDirectory(): string
+    {
+        return __DIR__.'/../';
+    }
+
+    public function defineBootloaders(): array
+    {
+        return [
+            ConfigurationBootloader::class,
+            NotificationsBootloader::class,
+        ];
+    }
 }

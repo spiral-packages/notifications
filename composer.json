@@ -1,39 +1,47 @@
 {
-  "name": ":vendor_slug/:package_slug",
-  "description": ":package_description",
+  "name": "spiral-packages/notifications",
+  "description": "This is my package notifications",
   "keywords": [
-    ":vendor_name",
+    "spiral-packages",
     "spiral",
-    ":package_slug"
+    "notifications"
   ],
-  "homepage": "https://github.com/:vendor_slug/:package_slug",
+  "homepage": "https://github.com/spiral-packages/notifications",
   "license": "MIT",
   "authors": [
     {
-      "name": ":author_name",
-      "email": "author@domain.com",
+      "name": "butschster",
+      "email": "butschster@gmail.com",
       "role": "Developer"
     }
   ],
   "require": {
-    "php": "^8.0",
-    "spiral/boot": "^2.8",
-    "spiral/console": "^2.8",
-    "spiral/core": "^2.8"
+    "php": ">=8.0",
+    "doctrine/inflector": "^2.0",
+    "spiral/boot": "^2.9",
+    "spiral/config": "^2.9",
+    "spiral/core": "^2.9",
+    "spiral/queue": "^2.9",
+    "spiral/sendit": "^2.9",
+    "spiral/snapshots": "^2.9",
+    "symfony/messenger": "^6.0",
+    "symfony/notifier": "^6.0"
   },
   "require-dev": {
     "mockery/mockery": "^1.5",
-    "vimeo/psalm": "^4.9",
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "^9.5",
+    "spiral/testing": "dev-master",
+    "vimeo/psalm": "^4.9"
   },
   "autoload": {
     "psr-4": {
-      "VendorName\\Skeleton\\": "src"
+      "Spiral\\Notifications\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "VendorName\\Skeleton\\Tests\\": "tests/src"
+      "Spiral\\Notifications\\Tests\\App\\": "tests/app",
+      "Spiral\\Notifications\\Tests\\": "tests/src"
     }
   },
   "scripts": {
@@ -41,12 +49,15 @@
     "psalm": "vendor/bin/psalm --config=psalm.xml ./src"
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "spiral/composer-publish-plugin": false
+    }
   },
   "extra": {
     "spiral": {
       "bootloaders": [
-        "VendorName\\Skeleton\\SkeletonBootloader"
+        "Spiral\\Notifications\\NotificationsBootloader"
       ]
     }
   },

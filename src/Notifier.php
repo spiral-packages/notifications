@@ -2,7 +2,7 @@
 
 namespace Spiral\Notifications;
 
-use Spiral\Queue\QueueInterface;
+use Spiral\Queue\QueueConnectionProviderInterface;
 use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\ChannelPolicy;
 use Symfony\Component\Notifier\Channel\ChannelPolicyInterface;
@@ -19,22 +19,30 @@ final class Notifier implements NotifierInterface
 
     public function __construct(
         private ChannelManager $channelManager,
-        private QueueInterface $queue,
+        private QueueConnectionProviderInterface $queue,
         private ?ChannelPolicyInterface $policy = null
     ) {
     }
 
-    public function send(Notification $notification, RecipientInterface ...$recipients): void
+    public function sendQueued(Notification $notification, RecipientInterface ...$recipients): void
     {
+        if (! $recipients) {
+            $recipients = [new NoRecipient()];
+        }
+
+        $queue = $this->queue->getConnection();
+
         foreach ($recipients as $recipient) {
-            $this->queue->push(SendNotificationJob::class, [
-                'notification' => $notification,
-                'recipient' => $recipient,
-            ]);
+            foreach ($this->getChannels($notification, $recipient) as $channel => $transportName) {
+                $queue->push(SendNotificationJob::class, [
+                    'notification' => $notification,
+                    'recipient' => $recipient,
+                ]);
+            }
         }
     }
 
-    public function sendNow(Notification $notification, RecipientInterface ...$recipients): void
+    public function send(Notification $notification, RecipientInterface ...$recipients): void
     {
         if (! $recipients) {
             $recipients = [new NoRecipient()];

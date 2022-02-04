@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Notifications;
+namespace Spiral\Notifications\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Config\ConfiguratorInterface;
+use Spiral\Notifications\ChannelManager;
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Notifications\Notifier;
 use Spiral\Queue\Bootloader\QueueBootloader;
 use Spiral\Queue\QueueConnectionProviderInterface;
 use Symfony\Component\Notifier\Channel\BrowserChannel;
@@ -41,41 +43,9 @@ class NotificationsBootloader extends Bootloader
             NotificationsConfig::CONFIG,
             [
                 'queueConnection' => null,
-
-                'channels' => [
-
-                    // 'sms' => [
-                    //     'type' => 'sms',
-                    //     'transport' => 'smsapi',
-                    // ],
-
-                    // 'chat/slack' => [
-                    //     'type' => 'chat',
-                    //     'transport' => 'slack',
-                    // ],
-
-                    // 'email' => [
-                    //     'type' => 'email',
-                    //     'transport' => 'slack',
-                    // ],
-
-                ],
-
-                'transports' => [
-
-                    // 'smsapi' => env('SMSAPI_DSN'),   // smsapi://TOKEN@default?from=FROM,
-                    // 'email' => env('MAILER_DSN')     // smtp://user:pass@smtp.example.com:25
-
-                ],
-
-                'policies' => [
-
-                    // 'urgent' => ['sms', 'chat/slack', 'email'],
-
-                    // 'high' => ['chat/slack'],
-
-                ],
-
+                'channels' => [],
+                'transports' => [],
+                'policies' => [],
                 'typeAliases' => [
                     'browser' => BrowserChannel::class,
                     'chat' => ChatChannel::class,
@@ -93,13 +63,7 @@ class NotificationsBootloader extends Bootloader
         ChannelPolicyInterface $policy,
         NotificationsConfig $config
     ): NotifierInterface {
-        return new Notifier(
-            $manager,
-            $connectionProvider->getConnection(
-                $config->getQueueConnection()
-            ),
-            $policy
-        );
+        return new Notifier($manager, $connectionProvider, $policy);
     }
 
     private function initChannelPolicy(NotificationsConfig $config): ChannelPolicyInterface
