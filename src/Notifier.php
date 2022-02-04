@@ -2,6 +2,7 @@
 
 namespace Spiral\Notifications;
 
+use Spiral\Notifications\Config\NotificationsConfig;
 use Spiral\Queue\QueueConnectionProviderInterface;
 use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\ChannelPolicy;
@@ -19,6 +20,7 @@ final class Notifier implements NotifierInterface
 
     public function __construct(
         private ChannelManager $channelManager,
+        private NotificationsConfig $config,
         private QueueConnectionProviderInterface $queue,
         private ?ChannelPolicyInterface $policy = null
     ) {
@@ -30,7 +32,7 @@ final class Notifier implements NotifierInterface
             $recipients = [new NoRecipient()];
         }
 
-        $queue = $this->queue->getConnection();
+        $queue = $this->queue->getConnection($this->config->getQueueConnection());
 
         foreach ($recipients as $recipient) {
             foreach ($this->getChannels($notification, $recipient) as $channel => $transportName) {
