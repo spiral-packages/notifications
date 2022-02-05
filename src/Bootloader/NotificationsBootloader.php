@@ -42,7 +42,7 @@ class NotificationsBootloader extends Bootloader
         $this->config->setDefaults(
             NotificationsConfig::CONFIG,
             [
-                'queueConnection' => null,
+                'queueConnection' => $env->get('NOTIFICATIONS_QUEUE_CONNECTION', 'sync'),
                 'channels' => [],
                 'transports' => [],
                 'policies' => [],

@@ -57,7 +57,7 @@
   "extra": {
     "spiral": {
       "bootloaders": [
-        "Spiral\\Notifications\\NotificationsBootloader"
+        "Spiral\\Notifications\\Bootloader\\NotificationsBootloader"
       ]
     }
   },

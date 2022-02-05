@@ -7,6 +7,8 @@ namespace Spiral\Notifications;
 use Spiral\Core\Container;
 use Spiral\Notifications\Config\NotificationsConfig;
 use Spiral\SendIt\Config\MailerConfig;
+use Symfony\Component\Mailer\Transport\RoundRobinTransport as MailerRoundRobinTransport;
+use Symfony\Component\Mailer\Transport\TransportInterface as MailerTransportInterface;
 use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\EmailChannel;
 use Symfony\Component\Notifier\Transport;
@@ -20,8 +22,7 @@ final class ChannelManager
         private Container $container,
         private NotificationsConfig $config,
         private MailerConfig $mailerConfig,
-    )
-    {
+    ) {
     }
 
     public function getChannel(string $name): ?ChannelInterface
@@ -31,16 +32,49 @@ final class ChannelManager
         }
 
         $channel = $this->config->getChannel($name);
-        $dsn = $channel['transport']->getOriginalDsn();
+        $dsns = $channel['transport'];
 
-        return $this->channels[$name] = match ($channel['type']) {
-            EmailChannel::class => $this->container->make($channel['type'], [
-                'transport' => \Symfony\Component\Mailer\Transport::fromDsn($dsn),
-                'from' => $this->mailerConfig->getFromAddress()
-            ]),
-            default => $this->container->make($channel['type'], [
-                'transport' => Transport::fromDsn($dsn),
-            ])
-        };
+        if ($channel['type'] === EmailChannel::class) {
+            if (\count($dsns) === 1) {
+                $transport = $this->resolveMailerTransport($dsns[0]);
+            } else {
+                $transport = new MailerRoundRobinTransport(
+                    \array_map(function (Transport\Dsn $dsn): MailerTransportInterface {
+                        return $this->resolveMailerTransport($dsn);
+                    }, $dsns)
+                );
+            }
+
+            return $this->container->make($channel['type'], [
+                'transport' => $transport,
+                'from' => $this->mailerConfig->getFromAddress(),
+            ]);
+        }
+
+        if (\count($dsns) === 1) {
+            $transport = $this->resolveTransport($dsns[0]);
+        } else {
+            $transport = new Transport\RoundRobinTransport(
+                \array_map(function (Transport\Dsn $dsn): Transport\TransportInterface {
+                    return $this->resolveTransport($dsn);
+                }, $dsns)
+            );
+        }
+
+        return $this->container->make($channel['type'], [
+            'transport' => $transport,
+        ]);
+    }
+
+    private function resolveTransport(Transport\Dsn $dsn): Transport\TransportInterface
+    {
+        return Transport::fromDsn($dsn->getOriginalDsn());
+    }
+
+    private function resolveMailerTransport(Transport\Dsn $dsn): MailerTransportInterface
+    {
+        return \Symfony\Component\Mailer\Transport::fromDsn(
+            $dsn->getOriginalDsn()
+        );
     }
 }

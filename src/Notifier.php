@@ -39,12 +39,24 @@ final class Notifier implements NotifierInterface
                 $queue->push(SendNotificationJob::class, [
                     'notification' => $notification,
                     'recipient' => $recipient,
+                    'transportName' => $transportName,
                 ]);
             }
         }
     }
 
     public function send(Notification $notification, RecipientInterface ...$recipients): void
+    {
+        if ($notification instanceof QueueableInterface) {
+            $this->sendQueued($notification, ...$recipients);
+
+            return;
+        }
+
+        $this->sendNow($notification, ...$recipients);
+    }
+
+    public function sendNow(Notification $notification, RecipientInterface ...$recipients): void
     {
         if (! $recipients) {
             $recipients = [new NoRecipient()];

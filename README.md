@@ -63,7 +63,11 @@ return [
         ],
         'email' => [
             'type' => 'email',
-            'transport' => 'email',
+            'transport' => 'smtp',
+        ],
+        'roundrobin_email' => [
+            'type' => 'email',
+            'transport' => ['smtp', 'smtp_1'], // will be used roundrobin algorithm 
         ],
         'chat/slack' => [
             'type' => 'chat',
@@ -80,7 +84,8 @@ return [
     // https://symfony.com/doc/current/mailer.html#using-built-in-transports
     'transports' => [
         'nexmo' => env('NOTIFICATIONS_NEXMO_DSN'),          // nexmo://KEY:SECRET@default?from=FROM
-        'email' => env('NOTIFICATIONS_EMAIL_DSN'),          // smtp://user:pass@smtp.example.com:25
+        'smtp' => env('NOTIFICATIONS_EMAIL_DSN'),          // smtp://user:pass@smtp.example.com:25
+        'smtp_1' => env('NOTIFICATIONS_EMAIL_DSN'),          // smtp://user:pass@smtp.example.com:25
         'slack' => env('NOTIFICATIONS_SLACK_DSN'),          // slack://TOKEN@default?channel=CHANNEL
         'firebase' => env('NOTIFICATIONS_FIREBASE_DSN'),    // firebase://USERNAME:PASSWORD@default
         // ..
