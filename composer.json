@@ -1,6 +1,6 @@
 {
   "name": "spiral-packages/notifications",
-  "description": "This is my package notifications",
+  "description": "Sending notifications from Spiral framework across a variety of delivery channels",
   "keywords": [
     "spiral-packages",
     "spiral",
