@@ -63,7 +63,7 @@ class NotificationsBootloader extends Bootloader
         ChannelPolicyInterface $policy,
         NotificationsConfig $config
     ): NotifierInterface {
-        return new Notifier($manager, $connectionProvider, $policy);
+        return new Notifier($manager, $config, $connectionProvider, $policy);
     }
 
     private function initChannelPolicy(NotificationsConfig $config): ChannelPolicyInterface

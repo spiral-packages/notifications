@@ -36,11 +36,11 @@ final class ChannelManager
 
         if ($channel['type'] === EmailChannel::class) {
             if (\count($dsns) === 1) {
-                $transport = $this->resolveMailerTransport($dsns[0]);
+                $transport = $this->resolveMailerTransport(new Transport\Dsn($dsns[0]));
             } else {
                 $transport = new MailerRoundRobinTransport(
-                    \array_map(function (Transport\Dsn $dsn): MailerTransportInterface {
-                        return $this->resolveMailerTransport($dsn);
+                    \array_map(function (string $dsn): MailerTransportInterface {
+                        return $this->resolveMailerTransport(new Transport\Dsn($dsn));
                     }, $dsns)
                 );
             }
