@@ -3,6 +3,7 @@
 namespace Spiral\Notifications;
 
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Queue\QueueableInterface;
 use Spiral\Queue\QueueConnectionProviderInterface;
 use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\ChannelPolicy;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Notifications;
 
-use Spiral\Core\Container;
+use Spiral\Core\FactoryInterface;
 use Spiral\Notifications\Config\NotificationsConfig;
 use Spiral\SendIt\Config\MailerConfig;
 use Symfony\Component\Mailer\Transport\RoundRobinTransport as MailerRoundRobinTransport;
@@ -19,7 +19,7 @@ final class ChannelManager
     private array $channels = [];
 
     public function __construct(
-        private Container $container,
+        private FactoryInterface $factory,
         private NotificationsConfig $config,
         private MailerConfig $mailerConfig,
     ) {
@@ -36,16 +36,16 @@ final class ChannelManager
 
         if ($channel['type'] === EmailChannel::class) {
             if (\count($dsns) === 1) {
-                $transport = $this->resolveMailerTransport(new Transport\Dsn($dsns[0]));
+                $transport = $this->resolveMailerTransport($dsns[0]);
             } else {
                 $transport = new MailerRoundRobinTransport(
-                    \array_map(function (string $dsn): MailerTransportInterface {
-                        return $this->resolveMailerTransport(new Transport\Dsn($dsn));
+                    \array_map(function (Transport\Dsn $dsn): MailerTransportInterface {
+                        return $this->resolveMailerTransport($dsn);
                     }, $dsns)
                 );
             }
 
-            return $this->container->make($channel['type'], [
+            return $this->factory->make($channel['type'], [
                 'transport' => $transport,
                 'from' => $this->mailerConfig->getFromAddress(),
             ]);
@@ -61,7 +61,7 @@ final class ChannelManager
             );
         }
 
-        return $this->container->make($channel['type'], [
+        return $this->factory->make($channel['type'], [
             'transport' => $transport,
         ]);
     }

@@ -12,10 +12,18 @@ use Symfony\Component\Notifier\Recipient\RecipientInterface;
 
 final class SendNotificationJob implements HandlerInterface
 {
-    public function __construct(private NotifierInterface $notifier)
-    {
+    public function __construct(
+        private NotifierInterface $notifier
+    ) {
     }
 
+    /**
+     * @param array{
+     *     notification: Notification,
+     *     recipient: RecipientInterface
+     * } $payload
+     * @throws InvalidArgumentException
+     */
     public function handle(string $name, string $id, array $payload): void
     {
         if (! isset($payload['notification'])) {
@@ -25,7 +33,7 @@ final class SendNotificationJob implements HandlerInterface
         if (! $payload['notification'] instanceof Notification) {
             throw new InvalidArgumentException(
                 sprintf(
-                    'Payload `notification` key value type should be instance of %s',
+                    'Payload `notification` key value type should be instance of `%s`',
                     Notification::class
                 )
             );
@@ -35,19 +43,17 @@ final class SendNotificationJob implements HandlerInterface
             throw new InvalidArgumentException('Payload `recipient` key is required.');
         }
 
+
         if (! $payload['recipient'] instanceof RecipientInterface) {
             throw new InvalidArgumentException(
                 sprintf(
-                    'Payload `recipient` key value type should be instance of %s',
+                    'Payload `recipient` key value type should be instance of `%s`',
                     RecipientInterface::class
                 )
             );
         }
 
-        /** @var Notification $notification */
         $notification = $payload['notification'];
-
-        /** @var RecipientInterface $notification */
         $recipient = $payload['recipient'];
 
         $this->notifier->sendNow($notification, $recipient);
