@@ -20,10 +20,10 @@ final class Notifier implements NotifierInterface
     private array $adminRecipients = [];
 
     public function __construct(
-        private ChannelManager $channelManager,
-        private NotificationsConfig $config,
-        private QueueConnectionProviderInterface $queue,
-        private ?ChannelPolicyInterface $policy = null
+        private readonly ChannelManager $channelManager,
+        private readonly NotificationsConfig $config,
+        private readonly QueueConnectionProviderInterface $queue,
+        private readonly ?ChannelPolicyInterface $policy = null
     ) {
     }
 
@@ -89,7 +89,7 @@ final class Notifier implements NotifierInterface
         $channels = $notification->getChannels($recipient);
 
         if (! $channels) {
-            $errorPrefix = sprintf(
+            $errorPrefix = \sprintf(
                 'Unable to determine which channels to use to send the "%s" notification',
                 \get_class($notification)
             );
@@ -97,13 +97,13 @@ final class Notifier implements NotifierInterface
             $error = 'you should either pass channels in the constructor, override its "getChannels()" method';
             if (null === $this->policy) {
                 throw new LogicException(
-                    sprintf('%s; %s, or configure a "%s".', $errorPrefix, $error, ChannelPolicy::class)
+                    \sprintf('%s; %s, or configure a "%s".', $errorPrefix, $error, ChannelPolicy::class)
                 );
             }
 
             if (! $channels = $this->policy->getChannels($notification->getImportance())) {
                 throw new LogicException(
-                    sprintf(
+                    \sprintf(
                         '%s; the "%s" returns no channels for importance "%s"; %s.',
                         $errorPrefix,
                         ChannelPolicy::class,

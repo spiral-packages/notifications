@@ -33,11 +33,12 @@ class NotificationsBootloader extends Bootloader
         Notifier::class => [self::class, 'initNotifier'],
     ];
 
-    public function __construct(private ConfiguratorInterface $config)
-    {
+    public function __construct(
+        private readonly ConfiguratorInterface $config
+    ) {
     }
 
-    public function boot(EnvironmentInterface $env): void
+    public function init(EnvironmentInterface $env): void
     {
         $this->config->setDefaults(
             NotificationsConfig::CONFIG,

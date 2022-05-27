@@ -16,19 +16,20 @@
     }
   ],
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.1",
     "doctrine/inflector": "^2.0",
-    "spiral/boot": "^2.9",
-    "spiral/config": "^2.9",
-    "spiral/core": "^2.9",
-    "spiral/queue": "^2.9",
-    "spiral/sendit": "^2.9",
-    "spiral/snapshots": "^2.9",
+    "spiral/boot": "^3.0",
+    "spiral/config": "^3.0",
+    "spiral/core": "^3.0",
+    "spiral/queue": "^3.0",
+    "spiral/sendit": "^3.0",
+    "spiral/snapshots": "^3.0",
     "symfony/messenger": "^6.0",
     "symfony/notifier": "^6.0"
   },
   "require-dev": {
-    "spiral/testing": "^1.2",
+    "spiral/framework": "^3.0",
+    "spiral/testing": "^2.0",
     "symfony/firebase-notifier": "^6.0",
     "vimeo/psalm": "^4.9"
   },

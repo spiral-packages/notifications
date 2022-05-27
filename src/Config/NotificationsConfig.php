@@ -14,7 +14,7 @@ final class NotificationsConfig extends InjectableConfig
 {
     public const CONFIG = 'notifications';
 
-    protected $config = [
+    protected array $config = [
         'queueConnection' => null,
         'channels' => [],
         'transports' => [],
@@ -43,26 +43,28 @@ final class NotificationsConfig extends InjectableConfig
     public function getChannel(string $name): array
     {
         if (! isset($this->config['channels'][$name])) {
-            throw new TransportException(sprintf('Channel with given name `%s` is not found.', $name));
+            throw new TransportException(
+                \sprintf('Channel with given name `%s` is not found.', $name)
+            );
         }
 
         $channel = $this->config['channels'][$name];
 
         if (! \is_array($channel)) {
             throw new InvalidArgumentException(
-                sprintf('Config for channel `%s` must be an array.', $name)
+                \sprintf('Config for channel `%s` must be an array.', $name)
             );
         }
 
         if (! isset($channel['type'])) {
             throw new InvalidArgumentException(
-                sprintf('Config for channel `%s` should contain `type` key.', $name)
+                \sprintf('Config for channel `%s` should contain `type` key.', $name)
             );
         }
 
         if (! isset($channel['transport'])) {
             throw new InvalidArgumentException(
-                sprintf('Config for channel `%s` should contain `transport` key.', $name)
+                \sprintf('Config for channel `%s` should contain `transport` key.', $name)
             );
         }
 
@@ -86,14 +88,16 @@ final class NotificationsConfig extends InjectableConfig
 
         foreach ($names as $name) {
             if (! isset($this->config['transports'][$name])) {
-                throw new TransportException(sprintf('Transport with given name `%s` is not found.', $name));
+                throw new TransportException(
+                    \sprintf('Transport with given name `%s` is not found.', $name)
+                );
             }
 
             $transport = $this->config['transports'][$name];
 
             if (! \is_string($transport)) {
                 throw new InvalidArgumentException(
-                    sprintf('Config for transport `%s` must be a DSN string', $name)
+                    \sprintf('Config for transport `%s` must be a DSN string', $name)
                 );
             }
 

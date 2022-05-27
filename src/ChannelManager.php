@@ -19,9 +19,9 @@ final class ChannelManager
     private array $channels = [];
 
     public function __construct(
-        private FactoryInterface $factory,
-        private NotificationsConfig $config,
-        private MailerConfig $mailerConfig,
+        private readonly FactoryInterface $factory,
+        private readonly NotificationsConfig $config,
+        private readonly MailerConfig $mailerConfig,
     ) {
     }
 
