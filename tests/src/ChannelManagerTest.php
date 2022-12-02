@@ -8,6 +8,7 @@ use Mockery as m;
 use Spiral\Core\FactoryInterface;
 use Spiral\Notifications\ChannelManager;
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Notifications\NotificationTransportResolver;
 use Spiral\SendIt\Config\MailerConfig;
 use Symfony\Component\Mailer\Transport\RoundRobinTransport as MailerRoundRobinTransport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
@@ -72,7 +73,8 @@ final class ChannelManagerTest extends TestCase
                 'queue' => null,
                 'pipeline' => null,
                 'queueConnection' => null,
-            ])
+            ]),
+            new NotificationTransportResolver()
         );
     }
 
