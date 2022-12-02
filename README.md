@@ -1,11 +1,11 @@
-# This is my package notifications
+# Notifications package for the Spiral Framework
 
 [![PHP](https://img.shields.io/packagist/php-v/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spiral-packages/notifications/run-tests?label=tests&style=flat-square)](https://github.com/spiral-packages/notifications/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
 
-The package provides support for sending notifications from Spiral framework across a variety of delivery channels,
+The package provides support for sending notifications from the Spiral Dramework across a variety of delivery channels,
 including [email](https://symfony.com/doc/current/mailer.html#using-built-in-transports),
 [SMS](https://symfony.com/doc/current/notifier.html#sms-channel),
 [chat](https://symfony.com/doc/current/notifier.html#chat-channel)
@@ -68,7 +68,7 @@ return [
         ],
         'roundrobin_email' => [
             'type' => 'email',
-            'transport' => ['smtp', 'smtp_1'], // will be used roundrobin algorithm 
+            'transport' => ['smtp', 'smtp_1'], // will be used roundrobin algorithm
         ],
         'chat/slack' => [
             'type' => 'chat',
@@ -80,7 +80,7 @@ return [
         ],
     ],
 
-    // Full list of available transports you can see by following link below 
+    // Full list of available transports you can see by following link below
     // https://symfony.com/doc/current/notifier.html#channels-chatters-texters-email-browser-and-push
     // https://symfony.com/doc/current/mailer.html#using-built-in-transports
     'transports' => [
@@ -178,7 +178,7 @@ class BanUserService {
     public function handle(string $userUuid): void
     {
         $user = $this->repository->findByPK($userUuid);
-        
+
         // Send now
         $this->notifier->send(
             new UserBannedNotification('Your profile banned for activity that violates rules'),
@@ -191,6 +191,25 @@ class BanUserService {
             new UserBannedNotification('Your profile banned for activity that violates rules'),
             $user
         );
+    }
+}
+```
+
+### Custom notification transports
+
+If you want to use custom notification transport like [`spacetab-io/smsaero-notifier`](https://github.com/spacetab-io/smsaero-notifier-php)
+you can register it in `Spiral\Notifications\NotificationTransportResolver`.
+
+```php
+use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Notifications\NotificationTransportResolver;
+use Spacetab\SmsaeroNotifier\SmsaeroTransportFactory;
+
+class MyBootloader extends Bootloader
+{
+    public function boot(NotificationTransportResolver $resolver): void
+    {
+        $resolver->registerTransport(new SmsaeroTransportFactory());
     }
 }
 ```
