@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Notifications;
 
+use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Notifications\Config\NotificationsConfig;
 use Spiral\SendIt\Config\MailerConfig;
@@ -13,7 +14,7 @@ use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\EmailChannel;
 use Symfony\Component\Notifier\Transport;
 
-final class ChannelManager
+final class ChannelManager implements SingletonInterface
 {
     /** @var array<non-empty-string, ChannelInterface> */
     private array $channels = [];
@@ -22,6 +23,7 @@ final class ChannelManager
         private readonly FactoryInterface $factory,
         private readonly NotificationsConfig $config,
         private readonly MailerConfig $mailerConfig,
+        private readonly NotificationTransportResolver $transportResolver,
     ) {
     }
 
@@ -52,11 +54,11 @@ final class ChannelManager
         }
 
         if (\count($dsns) === 1) {
-            $transport = $this->resolveTransport($dsns[0]);
+            $transport = $this->transportResolver->resolve($dsns[0]);
         } else {
             $transport = new Transport\RoundRobinTransport(
                 \array_map(function (Transport\Dsn $dsn): Transport\TransportInterface {
-                    return $this->resolveTransport($dsn);
+                    return $this->transportResolver->resolve($dsn);
                 }, $dsns)
             );
         }
@@ -64,11 +66,6 @@ final class ChannelManager
         return $this->factory->make($channel['type'], [
             'transport' => $transport,
         ]);
-    }
-
-    private function resolveTransport(Transport\Dsn $dsn): Transport\TransportInterface
-    {
-        return Transport::fromDsn($dsn->getOriginalDsn());
     }
 
     private function resolveMailerTransport(Transport\Dsn $dsn): MailerTransportInterface
