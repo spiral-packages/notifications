@@ -198,7 +198,7 @@ class BanUserService {
 ### Custom notification transports
 
 If you want to use custom notification transport like [`spacetab-io/smsaero-notifier`](https://github.com/spacetab-io/smsaero-notifier-php)
-you can register it in `Spiral\Notifications\NotificationTransportResolver`.
+you can register it in `Spiral\Notifications\NotificationTransportRegistryInterface`.
 
 ```php
 use Spiral\Boot\Bootloader\Bootloader;
@@ -207,7 +207,7 @@ use Spacetab\SmsaeroNotifier\SmsaeroTransportFactory;
 
 class MyBootloader extends Bootloader
 {
-    public function boot(NotificationTransportResolver $resolver): void
+    public function boot(NotificationTransportRegistryInterface $registry): void
     {
         $resolver->registerTransport(new SmsaeroTransportFactory());
     }

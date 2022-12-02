@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\Notifications;
 
-use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Notifications\Config\NotificationsConfig;
 use Spiral\SendIt\Config\MailerConfig;
@@ -14,7 +13,7 @@ use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\EmailChannel;
 use Symfony\Component\Notifier\Transport;
 
-final class ChannelManager implements SingletonInterface
+final class ChannelManager
 {
     /** @var array<non-empty-string, ChannelInterface> */
     private array $channels = [];
@@ -23,7 +22,7 @@ final class ChannelManager implements SingletonInterface
         private readonly FactoryInterface $factory,
         private readonly NotificationsConfig $config,
         private readonly MailerConfig $mailerConfig,
-        private readonly NotificationTransportResolver $transportResolver,
+        private readonly NotificationTransportResolverInterface $transportResolver,
     ) {
     }
 

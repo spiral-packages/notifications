@@ -9,6 +9,9 @@ use Spiral\Boot\EnvironmentInterface;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Notifications\ChannelManager;
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Notifications\NotificationTransportRegistryInterface;
+use Spiral\Notifications\NotificationTransportResolver;
+use Spiral\Notifications\NotificationTransportResolverInterface;
 use Spiral\Notifications\Notifier;
 use Spiral\Queue\Bootloader\QueueBootloader;
 use Spiral\Queue\QueueConnectionProviderInterface;
@@ -31,6 +34,9 @@ class NotificationsBootloader extends Bootloader
         NotifierInterface::class => Notifier::class,
         ChannelPolicyInterface::class => [self::class, 'initChannelPolicy'],
         Notifier::class => [self::class, 'initNotifier'],
+        ChannelManager::class => ChannelManager::class,
+        NotificationTransportResolverInterface::class => NotificationTransportResolver::class,
+        NotificationTransportRegistryInterface::class => NotificationTransportResolver::class,
     ];
 
     public function __construct(

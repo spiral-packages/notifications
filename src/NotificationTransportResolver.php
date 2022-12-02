@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Spiral\Notifications;
 
-use Spiral\Core\Container\SingletonInterface;
-use Symfony\Component\Notifier\Exception\UnsupportedSchemeException;
 use Symfony\Component\Notifier\Transport;
 use Symfony\Component\Notifier\Transport\TransportFactoryInterface;
 
-final class NotificationTransportResolver implements SingletonInterface
+final class NotificationTransportResolver implements NotificationTransportResolverInterface,
+                                                     NotificationTransportRegistryInterface
 {
     /** @var TransportFactoryInterface[] $transports */
     public function __construct(
@@ -22,9 +21,6 @@ final class NotificationTransportResolver implements SingletonInterface
         $this->transports[] = $factory;
     }
 
-    /**
-     * @throws UnsupportedSchemeException
-     */
     public function resolve(Transport\Dsn $dsn): Transport\TransportInterface
     {
         foreach ($this->transports as $transport) {
