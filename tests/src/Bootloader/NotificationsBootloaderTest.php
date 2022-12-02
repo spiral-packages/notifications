@@ -33,6 +33,11 @@ final class NotificationsBootloaderTest extends TestCase
     public function testNotificationTransportResolverShouldBeBound(): void
     {
         $this->assertContainerBoundAsSingleton(
+            NotificationTransportResolver::class,
+            NotificationTransportResolver::class
+        );
+
+        $this->assertContainerBoundAsSingleton(
             NotificationTransportResolverInterface::class,
             NotificationTransportResolver::class
         );

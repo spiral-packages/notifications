@@ -35,6 +35,7 @@ class NotificationsBootloader extends Bootloader
         ChannelPolicyInterface::class => [self::class, 'initChannelPolicy'],
         Notifier::class => [self::class, 'initNotifier'],
         ChannelManager::class => ChannelManager::class,
+        NotificationTransportResolver::class => NotificationTransportResolver::class,
         NotificationTransportResolverInterface::class => NotificationTransportResolver::class,
         NotificationTransportRegistryInterface::class => NotificationTransportResolver::class,
     ];
