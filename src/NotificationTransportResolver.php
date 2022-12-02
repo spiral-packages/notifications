@@ -10,10 +10,17 @@ use Symfony\Component\Notifier\Transport\TransportFactoryInterface;
 final class NotificationTransportResolver implements NotificationTransportResolverInterface,
                                                      NotificationTransportRegistryInterface
 {
-    /** @var TransportFactoryInterface[] $transports */
-    public function __construct(
-        private array $transports = []
-    ) {
+    /** @var TransportFactoryInterface[] */
+    private array $transports = [];
+
+    /**
+     * @param TransportFactoryInterface[] $transports
+     */
+    public function __construct(array $transports = [])
+    {
+        foreach ($transports as $transport) {
+            $this->registerTransport($transport);
+        }
     }
 
     public function registerTransport(TransportFactoryInterface $factory): void
