@@ -82,7 +82,7 @@ final class Notifier implements NotifierInterface
     }
 
     /**
-     * @return iterable<ChannelInterface>
+     * @return \Generator<ChannelInterface, null|string, mixed, void>
      */
     private function getChannels(Notification $notification, RecipientInterface $recipient): iterable
     {

@@ -8,19 +8,21 @@ use Mockery as m;
 use Spiral\Core\FactoryInterface;
 use Spiral\Notifications\ChannelManager;
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Notifications\NotificationTransportResolverInterface;
 use Spiral\SendIt\Config\MailerConfig;
 use Symfony\Component\Mailer\Transport\RoundRobinTransport as MailerRoundRobinTransport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
-use Symfony\Component\Notifier\Bridge\Firebase\FirebaseTransport;
 use Symfony\Component\Notifier\Channel\ChannelInterface;
 use Symfony\Component\Notifier\Channel\EmailChannel;
-use Symfony\Component\Notifier\Exception\UnsupportedSchemeException;
+use Symfony\Component\Notifier\Transport\Dsn;
 use Symfony\Component\Notifier\Transport\RoundRobinTransport;
+use Symfony\Component\Notifier\Transport\TransportInterface;
 
 final class ChannelManagerTest extends TestCase
 {
     private ChannelManager $manager;
     private m\LegacyMockInterface|m\MockInterface|FactoryInterface $factory;
+    private m\LegacyMockInterface|m\MockInterface|NotificationTransportResolverInterface $resolver;
 
     protected function setUp(): void
     {
@@ -72,7 +74,8 @@ final class ChannelManagerTest extends TestCase
                 'queue' => null,
                 'pipeline' => null,
                 'queueConnection' => null,
-            ])
+            ]),
+            $this->resolver = m::mock(NotificationTransportResolverInterface::class),
         );
     }
 
@@ -112,13 +115,14 @@ final class ChannelManagerTest extends TestCase
 
     public function testGetsNotificationChannelWithSingleTransport(): void
     {
+        $transport = m::mock(TransportInterface::class);
         $this->factory->shouldReceive('make')->once()
-            ->withArgs(static function (string $type, array $args): bool {
-                return $type === 'firebase'
-                    && $args['transport'] instanceof FirebaseTransport
-                    && (string)$args['transport'] === 'firebase://fcm.googleapis.com/fcm/send';
-            })
+            ->with('firebase', ['transport' => $transport])
             ->andReturn($channel = m::mock(ChannelInterface::class));
+
+        $this->resolver->shouldReceive('resolve')->once()->withArgs(static function (Dsn $dsn): bool {
+            return $dsn->getOriginalDsn() === 'firebase://USERNAME:PASSWORD@default';
+        })->andReturn($transport);
 
         $this->assertSame(
             $channel,
@@ -128,6 +132,9 @@ final class ChannelManagerTest extends TestCase
 
     public function testGetsNotificationChannelWithMultipleTransport(): void
     {
+        $transport1 = m::mock(TransportInterface::class);
+        $transport2 = m::mock(TransportInterface::class);
+
         $this->factory->shouldReceive('make')->once()
             ->withArgs(static function (string $type, array $args): bool {
                 return $type === 'firebase_multiple'
@@ -135,25 +142,17 @@ final class ChannelManagerTest extends TestCase
             })
             ->andReturn($channel = m::mock(ChannelInterface::class));
 
+        $this->resolver->shouldReceive('resolve')->once()->withArgs(static function (Dsn $dsn): bool {
+            return $dsn->getOriginalDsn() === 'firebase://USERNAME:PASSWORD@default';
+        })->andReturn($transport1);
+
+        $this->resolver->shouldReceive('resolve')->once()->withArgs(static function (Dsn $dsn): bool {
+            return $dsn->getOriginalDsn() === 'firebase://USERNAME1:PASSWORD@default';
+        })->andReturn($transport2);
+
         $this->assertSame(
             $channel,
             $this->manager->getChannel('firebase_multiple')
         );
-    }
-
-    public function testUnknownTransportTypeShouldThrowAnException(): void
-    {
-        $this->expectException(UnsupportedSchemeException::class);
-        $this->expectErrorMessage('The "foo" scheme is not supported.');
-
-        $this->manager->getChannel('unknown');
-    }
-
-    public function testUnsupportedTransportTypeShouldThrowAnException(): void
-    {
-        $this->expectException(UnsupportedSchemeException::class);
-        $this->expectErrorMessage('Unable to send notification via "discord" as the bridge is not installed; try running "composer require symfony/discord-notifier".');
-
-        $this->manager->getChannel('unsupported');
     }
 }

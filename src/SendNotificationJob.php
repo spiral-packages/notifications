@@ -23,6 +23,7 @@ final class SendNotificationJob implements HandlerInterface
      *     recipient: RecipientInterface
      * } $payload
      * @throws InvalidArgumentException
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function handle(string $name, string $id, array $payload): void
     {
@@ -53,9 +54,11 @@ final class SendNotificationJob implements HandlerInterface
             );
         }
 
-        $notification = $payload['notification'];
-        $recipient = $payload['recipient'];
+        \assert($this->notifier instanceof Notifier);
 
-        $this->notifier->sendNow($notification, $recipient);
+        $this->notifier->sendNow(
+            $payload['notification'],
+            $payload['recipient']
+        );
     }
 }

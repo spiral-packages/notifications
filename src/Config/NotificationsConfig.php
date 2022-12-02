@@ -35,10 +35,13 @@ final class NotificationsConfig extends InjectableConfig
      * @param string $name
      * @return array{
      *     type: class-string<ChannelInterface>,
-     *     transport: array<Dsn>
+     *     transport: Dsn[]
      * }
      * @throws InvalidArgumentException
      * @throws TransportException
+     *
+     * @psalm-suppress LessSpecificReturnStatement
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function getChannel(string $name): array
     {
@@ -78,7 +81,7 @@ final class NotificationsConfig extends InjectableConfig
     }
 
     /**
-     * @return array<string, Dsn>
+     * @return Dsn[]
      * @throws InvalidArgumentException
      * @throws TransportException
      */

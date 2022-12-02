@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Spiral\Notifications\Tests\Bootloader;
 
+use Spiral\Notifications\ChannelManager;
 use Spiral\Notifications\Config\NotificationsConfig;
+use Spiral\Notifications\NotificationTransportRegistryInterface;
+use Spiral\Notifications\NotificationTransportResolver;
+use Spiral\Notifications\NotificationTransportResolverInterface;
 use Spiral\Notifications\Notifier;
 use Spiral\Notifications\Tests\TestCase;
 use Spiral\Queue\QueueConnectionProviderInterface;
@@ -16,6 +20,32 @@ final class NotificationsBootloaderTest extends TestCase
     public function testQueueProviderShouldBeBound(): void
     {
         $this->assertContainerBound(QueueConnectionProviderInterface::class);
+    }
+
+    public function testChannelManagerShouldBeBound(): void
+    {
+        $this->assertContainerBoundAsSingleton(
+            ChannelManager::class,
+            ChannelManager::class
+        );
+    }
+
+    public function testNotificationTransportResolverShouldBeBound(): void
+    {
+        $this->assertContainerBoundAsSingleton(
+            NotificationTransportResolver::class,
+            NotificationTransportResolver::class
+        );
+
+        $this->assertContainerBoundAsSingleton(
+            NotificationTransportResolverInterface::class,
+            NotificationTransportResolver::class
+        );
+
+        $this->assertContainerBoundAsSingleton(
+            NotificationTransportRegistryInterface::class,
+            NotificationTransportResolver::class
+        );
     }
 
     public function testNotifierShouldBeBound()
