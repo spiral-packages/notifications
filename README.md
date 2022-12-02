@@ -1,9 +1,12 @@
 # Notifications package for the Spiral Framework
 
-[![PHP](https://img.shields.io/packagist/php-v/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spiral-packages/notifications/run-tests?label=tests&style=flat-square)](https://github.com/spiral-packages/notifications/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/spiral-packages/notifications.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/notifications)
+
+[![PHP Version Require](https://poser.pugx.org/spiral-packages/notifications/require/php)](https://packagist.org/packages/spiral-packages/notifications)
+[![Latest Stable Version](https://poser.pugx.org/spiral-packages/notifications/v/stable)](https://packagist.org/packages/spiral-packages/notifications)
+[![phpunit](https://github.com/spiral-packages/notifications/actions/workflows/phpunit.yml/badge.svg)](https://github.com/spiral-packages/notifications/actions)
+[![psalm](https://github.com/spiral-packages/notifications/actions/workflows/psalm.yml/badge.svg)](https://github.com/spiral-packages/notifications/actions)
+[![Total Downloads](https://poser.pugx.org/spiral-packages/notifications/downloads)](https://packagist.org/packages/spiral-packages/notifications)
+<a href="https://discord.gg/8bZsjYhVVk"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
 
 The package provides support for sending notifications from the Spiral Dramework across a variety of delivery channels,
 including [email](https://symfony.com/doc/current/mailer.html#using-built-in-transports),
